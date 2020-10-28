@@ -14,16 +14,20 @@
 // Step 9: Check out the newly-created .db3 table on TablePlus (SQL connection) (check both 'exports.up' and 'exports.down'
 // 			function expressions with npx knex migrate:latest & npx knex migrate:rollback, respectively).
 // Step 10: Import bcrypt (for use in the model file). < npm install bcryptjs >
-// Step 10: Set up the users folder and users-model file and write out the helper functions that will be used in the router functions.
+// Step 11: Set up the users folder and users-model file and write out the helper functions that will be used in the router functions.
+// Step 12: Set up the router to perform CRUD operations (using the helper functions from the model file(s) 
+// 			and test out the endpoints on Insomnia. 
 
 const express = require("express")
 const welcomeRouter = require("./welcome/welcome-router")
+const usersRouter = require("./users/users-router")
 
 const server = express()
 const port = process.env.PORT || 3000
 
 server.use(express.json())
 server.use(welcomeRouter)
+server.use(usersRouter)
 
 server.use((err, req, res, next) => {
 	console.log(err)
