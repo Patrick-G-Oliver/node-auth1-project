@@ -33,7 +33,7 @@ function restrict() {
 			// Only the session itself needs to be confirmed, as shown here.
 			if (!req.session || !req.session.user) {
 				return res.status(401).json({
-					message: "Invalid credentials"
+					message: "You shall not pass!"
 				})
 			}
 			// if everything is validated, we're good to go to next()...
