@@ -16,16 +16,46 @@
 // Step 10: Import bcrypt (for use in the model file). < npm install bcryptjs >
 // Step 11: Set up the users folder and users-model file and write out the helper functions that will be used in the router functions.
 // Step 12: Set up the router to perform CRUD operations (using the helper functions from the model file(s) 
-// 			and test out the endpoints on Insomnia. 
+// 			and test out the endpoints on Insomnia (to register a user, log a user in, and get a list of users from the db).
+// Step 13: Set up users-middelware file in users folder and write out restrict function (to restrict access to get users to authorized
+// 			users that are logged in). 
+// Step 14: Install express-session, < npm install express-session >, and import in index.js file for server.use call (this will allow
+// 			for authorization without verification of user credentials upon every request to the server.)
+// Step 15: Add < req.session.user = user > to users-router file (see users-router.js, line 60).
+// Step 16: Add session check to users-middleware restrict function (see users-middleware.js, lines 34-38).
+// Step 16: Add logout endpoint to router file (ends user sessions and therefore could not be added prior to the introdcution of 
+// 			express-session).
+// Step 17: Install connect-session-knex, < npm install connect-session-knex >, and import to index.js (this allows for session data to be 
+//			stored in the database instead of in local memory).
+// Step 18: Import config.js into index.js file, assigning it to a variable name "db" (see index.js, line 43), and add "store" property to
+// 			the server.use(session...) call (see index.js, lines 53-56).
+
+// users: 	(1) username: fulano, password: detal
+//			(2) username: fulana, password: detaltambien
+// 			(3) username: fulanito, password: detallito
+// 			(4) username: fulanita, password: detallita
 
 const express = require("express")
 const welcomeRouter = require("./welcome/welcome-router")
 const usersRouter = require("./users/users-router")
+const session = require("express-session")
+const KnexSessionStore = require("connect-session-knex")(session)
+const db = require("./data/config")
 
 const server = express()
 const port = process.env.PORT || 3000
 
 server.use(express.json())
+server.use(session({
+	resave: false, // avoid creating sessions that haven't changed
+	saveUninitialized: false, // GDPR laws against setting cookies automatically
+	secret: "keep it secret, keep it safe", // used to crytopgraphically sign the cookie
+	store: new KnexSessionStore({
+		knex: db, // configured instance of knex
+		createtable: true, // if the table does not exist, it will create it automatically
+	}),
+}))
+
 server.use(welcomeRouter)
 server.use(usersRouter)
 

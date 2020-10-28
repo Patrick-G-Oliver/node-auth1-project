@@ -1,11 +1,11 @@
 const express = require("express")
 const bcrypt = require("bcryptjs")
 const Users = require("./users-model")
-// const { restrict } = require("./users-middleware")
+const { restrict } = require("./users-middleware")
 
 const router = express.Router()
 
-router.get("/users", /* restrict(), */ async (req, res, next) => {
+router.get("/users", restrict(), async (req, res, next) => {
 	try {
 		res.json(await Users.find())
 	} catch(err) {
@@ -43,7 +43,7 @@ router.post("/login", async (req, res, next) => {
 		
 		if (!user) {
 			return res.status(401).json({
-				message: "Invalid Credentials",
+				message: "You shall not pass!",
 			})
 		}
 
@@ -52,15 +52,15 @@ router.post("/login", async (req, res, next) => {
 
 		if (!passwordValid) {
 			return res.status(401).json({
-				message: "Invalid Credentials",
+				message: "You shall not pass!",
 		})
 		}
 
 		// creates a new session and sends it back to the client
-		// req.session.user = user
+		req.session.user = user
 
 		res.json({
-			message: `Welcome ${user.username}!`,
+			message: `You are now logged in, ${user.username}!`,
 		})
 	} catch(err) {
 		next(err)
